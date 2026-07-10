@@ -10,7 +10,13 @@ The pattern rests on two observations from real multi-repo working sessions. Fir
 
 The skill is a directory: `SKILL.md` is the operating doctrine the lead adopts for the session; `references/` holds the copy-paste executor spec template, the report contracts, and the full verification ladder with collapse guidance for small tasks.
 
-**Private repository. All rights reserved.** Not licensed for redistribution.
+## Does the economics actually hold?
+
+Anthropic published measurements of exactly this pattern. On BrowseComp, Claude Managed Agents with a **Fable 5 orchestrator + Sonnet 5 worker sub-agents** achieved **96% of solo Fable 5 performance at 46% of the price**, with token-heavy research delegated to Sonnet ([@ClaudeDevs](https://x.com/claudedevs/status/2074606063509528855)). Their [plan-big-execute-small cookbook](https://github.com/anthropics/claude-cookbooks/blob/main/managed_agents/CMA_plan_big_execute_small.ipynb) measured a coverage-research workload at **2.5x cheaper and 3x faster** than a solo frontier agent at matched rigor, with 84% of input tokens billed at the cheap-worker rate.
+
+The same cookbook is the source of three refinements folded into `SKILL.md`: delegation has a floor cost so brief granularity has an optimum (over-fragmenting raises the bill); the advantage is largest on coverage workloads and narrows on discovery workloads that reward frontier intuition; and the verification standard only covers what you put in it, so verify premises, not just claims.
+
+No formal license; shared publicly as-is.
 
 ## Install and invoke
 

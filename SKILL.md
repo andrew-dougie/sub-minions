@@ -78,6 +78,8 @@ Small task? Collapse rungs, never the order: a two-file fix may be scope → spe
 
 Expect kills. In practice a good adversarial pass refutes real-looking P1s: a "missing guard" that exists two calls up the stack, a "race" that a queue already serializes. Every refuted finding is executor-cycle waste you just avoided. Findings that survive get marked VERIFIED in the master doc and may be stated as facts in specs.
 
+**Verify premises, not just claims.** The verification standard only covers what you put in it: a plan built on an unverified premise (a list from memory, an assumed contract, a "surely it works like X") passes every downstream check and is still wrong. If a premise matters, spend one more read-only agent verifying it before specs depend on it.
+
 ## 6. Specs
 
 Specs are the product of your thinking and the whole reason executors can be cheap. **Read `references/spec-template.md` before writing your first spec each session.** Every spec contains all 8 elements:
@@ -138,6 +140,9 @@ These rules prevented every collision. They are conventions you enforce through 
 - Executor tokens go to: reading many files, editing, building, testing.
 - All reporting agents return CONCLUSIONS with references, never file dumps. If an agent's report is mostly quoted code, its instructions were wrong; tighten the required output shape next launch.
 - Prefer relaunching a cheap executor with a better spec over a long corrective dialogue with a drifting one.
+- **Delegation has a floor cost** (agent setup + context handoff). Brief granularity has an optimum: splitting the same work into more, narrower specs raises total cost instead of lowering it. Merge related items into one spec when a single executor can hold them; split only along genuine parallelism or ownership boundaries. (Anthropic's managed-agents cookbook measured this directly: over-fragmenting briefs raised the bill.)
+- **When NOT to delegate:** narrow tasks with little reading/editing to arbitrage (the spec would cost more lead tokens than doing it); judgment ON the raw material itself (subtle analysis a cheap model would over-summarize — read it yourself); anything where the deliverable IS the thinking. Delegation shines on coverage workloads (read a lot, verify many things, edit many sites); the advantage narrows on discovery workloads that reward frontier intuition — keep those with the lead.
+- **Rigor is specified, not assumed.** A cheap executor defaults to lower rigor unless the spec states the standard explicitly (how many sources, what verification, what "done" means). Cost comparisons and quality expectations only hold at matched, stated rigor.
 
 ## 11. Worked example
 
