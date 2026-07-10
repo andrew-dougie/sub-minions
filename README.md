@@ -31,7 +31,7 @@ The repo root is the skill directory (`SKILL.md` at root), so installation is co
 ### Claude Code
 
 ```bash
-git clone git@github.com:andrew-dougie/sub-minions.git
+git clone https://github.com/andrew-dougie/sub-minions.git
 # global (all projects):
 cp -R sub-minions ~/.claude/skills/sub-minions
 # or per-project:
@@ -53,7 +53,7 @@ Skills also auto-trigger by description, so asking for "orchestrated mode" or "l
 Codex supports the same skill format (a directory containing `SKILL.md`). Skills live in `$CODEX_HOME/skills/` (default `~/.codex/skills/`):
 
 ```bash
-git clone git@github.com:andrew-dougie/sub-minions.git
+git clone https://github.com/andrew-dougie/sub-minions.git
 cp -R sub-minions ~/.codex/skills/sub-minions
 # restart Codex to pick up new skills
 ```
@@ -67,7 +67,7 @@ Args are passed as free text after the command (`/sub-minions exec=sonnet checkp
 Cursor commands are Markdown files invoked via `/` in chat:
 
 ```bash
-git clone git@github.com:andrew-dougie/sub-minions.git
+git clone https://github.com/andrew-dougie/sub-minions.git
 mkdir -p <project>/.cursor/commands
 cp sub-minions/SKILL.md <project>/.cursor/commands/sub-minions.md
 cp -R sub-minions/references <project>/.cursor/commands/sub-minions-references
@@ -106,3 +106,5 @@ Copy-paste skeleton with inline guidance: [references/spec-template.md](referenc
 - **Concurrency rules are convention, not enforcement.** One-writer-per-repo, one-driver-per-stateful-resource, and file freezes are honored because specs state them and the lead checks them at launch time. Nothing at the platform level prevents two agents from colliding if the lead schedules carelessly.
 - **Verification depth costs real tokens.** Adversarial passes and independent reviews are extra agent runs. The defaults assume multi-cycle work where a false P1 is more expensive than a skeptic pass; for small tasks, collapse the ladder (the skill tells the lead how).
 - **The lead is a single point of failure.** If the lead session dies, recovery depends entirely on master-doc discipline. That is why `master-doc=auto` is the default for multi-cycle work.
+
+Issues and suggestions welcome. If you adapt this for another agent platform, a PR to the install section would be appreciated.
