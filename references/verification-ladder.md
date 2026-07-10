@@ -14,7 +14,7 @@ Establish what "done" means, the cycle structure, and the approval contract (whe
 **Skip when:** never. Scope can be one sentence, but it exists.
 
 ### 2. Map (parallel read-only agents)
-Structured maps of unfamiliar territory: components, responsibilities, data flow, invariants, every claim anchored `file:line`. Maps feed slice design for audits and Verified Context for specs.
+Structured maps of unfamiliar territory: components, responsibilities, data flow, invariants, every claim anchored `file:line`. Maps feed slice design for audits and Verified Context for specs. Because Verified Context is ground truth the executor must not re-check, behavioral or contract claims from a single mapper get spot-read by the lead (or passed through a skeptic) before entering a spec.
 
 **Skip when:** the lead already knows the territory (recent work, small blast radius). Do not audit or spec into unmapped territory on the strength of assumption.
 
@@ -24,7 +24,7 @@ Sharply-scoped slices with explicit boundaries and a required finding format (se
 **Skip when:** the task is construction, not investigation (a feature build against known-good territory needs mapping, not auditing).
 
 ### 4. Adversarial verify (fresh read-only skeptics)
-Separate agents that did not produce the findings, instructed to CONFIRM or REFUTE each load-bearing claim by quoting current code; unquotable claims are REFUTED. Also adjudicates conflicts between auditors. This rung exists because auditors produce confident false positives, and one refuted P1 costs less here than after it has driven a spec, an executor run, and a review.
+Separate agents that did not produce the findings recommend CONFIRM or REFUTE for each load-bearing claim by quoting current code. Claims that match no quote are REFUTED (fabricated or stale); claims that quotation cannot settle — races, missing code, behavior emerging across files — come back UNPROVABLE-BY-QUOTE for the lead to judge by reading the code itself. Batch claims per skeptic (one skeptic checks several claims it didn't produce); reserve per-claim redundancy for findings that drive scheduling. Skeptics recommend and gather evidence on auditor conflicts; the lead rules. This rung exists because auditors produce confident false positives, and one refuted P1 costs less here than after it has driven a spec, an executor run, and a review.
 
 **Skip when:** `verify=spot` (lead personally re-reads the cited lines for top findings) or `verify=off`. Default to full adversarial when findings are numerous, when severity claims drive scheduling, or when two auditors disagree.
 

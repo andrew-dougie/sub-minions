@@ -83,6 +83,7 @@ Your final message is a data report, not prose. Use exactly this shape (full for
 
 - STATUS: COMPLETE | PARTIAL | STOPPED
 - COMMITS: sha + subject, one line each
+- FILES: every file touched, one per line
 - PER-ITEM: item number → done/skipped + one line (what was done, or why skipped)
 - VERIFICATION: each command → result verbatim summary
 - DEVIATIONS: anything not exactly per spec, with one-line reason (empty section if none)

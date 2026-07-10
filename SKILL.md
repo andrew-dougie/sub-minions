@@ -15,7 +15,7 @@ Parse space-separated `key=value` args from the invocation text after the skill 
 
 | Arg | Values | Default | Meaning |
 |---|---|---|---|
-| `exec` | `haiku` \| `sonnet` \| `opus` | `sonnet` | Model for implementation executor agents |
+| `exec` | `haiku` \| `sonnet` \| `opus` | `sonnet` | Model for implementation executors AND all read-only agents (mappers, auditors, skeptics) |
 | `test` | `haiku` \| `sonnet` \| `opus` | value of `exec` | Model for testing/verification executor agents |
 | `verify` | `off` \| `spot` \| `adversarial` | `adversarial` for multi-finding audits; `spot` for small tasks | Depth of audit-claim verification (Section 5) |
 | `review` | `off` \| `lead` \| `independent` | `lead` | Diff-review depth: `lead` = you read every executor diff; `independent` = that plus a separate review agent pass before merge-readiness |
@@ -30,15 +30,17 @@ On invocation, ECHO the resolved configuration as a short table (arg, value, sou
 
 **Lead (you):** scopes with the user, maps territory, designs slices, adjudicates conflicting findings, writes specs, reviews diffs, owns every judgment call, talks to the user. You are the only agent that ever decides *what* to build or *whether* a finding is real.
 
-**Mapping/audit agents (read-only):** explore and report conclusions with `file:line` references. They never edit anything.
+**Mapping/audit agents (read-only, `exec` model):** explore and report conclusions with `file:line` references. They never edit anything.
 
-**Skeptic agents (read-only):** attack specific claims. They never edit anything.
+**Skeptic agents (read-only, `exec` model):** attack specific claims and recommend verdicts with evidence. They never edit anything, and they never get the last word — you do.
 
 **Executor agents (`exec` model):** implement exactly one spec each. They never make design decisions; every decision was made in the spec.
 
 **Test agents (`test` model):** run verification scenarios and return structured PASS/FAIL/BLOCKED results. They never fix what they find.
 
-An executor is disposable: if one goes sideways, kill it, fix the spec, launch a fresh one. Never negotiate with a confused executor; the spec was the problem.
+**Model binding:** every subagent you launch runs at the `exec` model (test agents at `test`) unless you deliberately escalate a specific launch to a stronger model and say so. Never let a launch silently inherit your own model — on platforms where an unspecified model means "same as parent", an unbound mapper burns lead-tier tokens on exactly the work this skill exists to delegate.
+
+An executor that improvises is disposable: kill it, fix the spec, launch a fresh one. Never negotiate with a confused executor; the spec was the problem. But an executor that fires the escape hatch is not confused — it stopped cleanly, did nothing after the mismatch, and still holds all its context. If the platform can continue a spawned agent (SendMessage in Claude Code), send it the one-line spec correction instead of relaunching: one delta round, then kill and relaunch if it is still stuck.
 
 ## 3. Phase ladder
 
@@ -72,13 +74,13 @@ Small task? Collapse rungs, never the order: a two-file fix may be scope → spe
 - Overlapping slice edges are fine; unclaimed gaps are not. You own slice design.
 
 **Adversarial verification** (per `verify`):
-- `adversarial`: for each load-bearing finding (anything that would drive a code change or a severity call), launch separate skeptic agents that did NOT produce the finding, with the instruction: CONFIRM or REFUTE this exact claim by quoting the current code; a claim you cannot support with an exact quote is REFUTED. Skeptics also adjudicate conflicts between auditors.
+- `adversarial`: for the load-bearing findings (anything that would drive a code change or a severity call), launch skeptic agents that did NOT produce them. Batch claims per skeptic — one skeptic can check several claims it didn't produce; reserve per-claim redundancy for findings that drive scheduling. The instruction: for each claim, recommend CONFIRM or REFUTE by quoting the current code. A claim that matches no quote in the current code is REFUTED (fabricated or stale). A claim that may be true but that quotation cannot settle — a race, missing code, behavior emerging across files — is UNPROVABLE-BY-QUOTE and comes back to you, never silently refuted. Skeptics recommend and gather evidence on conflicts between auditors; you rule on every verdict, and you personally read the code behind every UNPROVABLE-BY-QUOTE before it drives anything.
 - `spot`: you personally re-verify the top findings by reading the cited lines yourself.
 - `off`: proceed on auditor claims (only when the user chose this).
 
 Expect kills. In practice a good adversarial pass refutes real-looking P1s: a "missing guard" that exists two calls up the stack, a "race" that a queue already serializes. Every refuted finding is executor-cycle waste you just avoided. Findings that survive get marked VERIFIED in the master doc and may be stated as facts in specs.
 
-**Verify premises, not just claims.** The verification standard only covers what you put in it: a plan built on an unverified premise (a list from memory, an assumed contract, a "surely it works like X") passes every downstream check and is still wrong. If a premise matters, spend one more read-only agent verifying it before specs depend on it.
+**Verify premises, not just claims.** The verification standard only covers what you put in it: a plan built on an unverified premise (a list from memory, an assumed contract, a "surely it works like X") passes every downstream check and is still wrong. If a premise matters, spend one more read-only agent verifying it before specs depend on it. The riskiest path is map → spec: mapper claims flow into a spec's Verified Context, where the executor is *forbidden* from re-checking them. Anchors self-verify (the quote either matches or the escape hatch fires), but a behavioral or contract claim from a single cheap mapper must be spot-read by you (or passed through a skeptic) before it is frozen into a spec as fact.
 
 ## 6. Specs
 
@@ -149,9 +151,9 @@ These rules prevented every collision. They are conventions you enforce through 
 Task: "Audit and fix our notification subsystem" (a backend repo and a client repo). Invoked as `/sub-minions exec=sonnet verify=adversarial checkpoints=functional master-doc=auto`.
 
 1. Echo resolved args. Scope with user: audit everything, fix in cycles, stop before behavior changes ship (`checkpoints=functional`). Create `NOTIF_MASTER.md` (`master-doc=auto`).
-2. Map: 2 parallel read-only mappers (backend trigger-to-push path; client receive-to-render path), single batch, background. Synthesize maps into the master doc.
-3. Audit: 4 parallel read-only auditors with bounded slices (triggers, fan-out/grouping, client rendering, read-state sync). 12 findings, 4 claimed P1.
-4. Verify (`verify=adversarial`): 2 skeptics CONFIRM/REFUTE each load-bearing claim with exact quotes. Two findings refuted (a P1 whose "missing guard" exists upstream; a duplicate that two auditors reported with conflicting severities, resolved and merged), one P1 downgraded. 10 verified findings recorded.
+2. Map: 2 parallel read-only mappers (`exec` model; backend trigger-to-push path; client receive-to-render path), single batch, background. Synthesize maps into the master doc; spot-read the two contract claims that will feed cycle-2 Verified Context.
+3. Audit: 4 parallel read-only auditors (`exec` model) with bounded slices (triggers, fan-out/grouping, client rendering, read-state sync). 12 findings, 4 claimed P1.
+4. Verify (`verify=adversarial`): 2 fresh skeptics (`exec` model) split the load-bearing claims between them and recommend CONFIRM/REFUTE with exact quotes; the lead rules on each. Two findings refuted (a P1 whose "missing guard" exists upstream; a duplicate that two auditors reported with conflicting severities, resolved and merged), one P1 downgraded, one race came back UNPROVABLE-BY-QUOTE and confirmed by the lead's own read. 10 verified findings recorded.
 5. Cycle 1 (non-functional: dead code, log noise, comments): two specs from the template, one sonnet executor per repo in parallel (rule 2 satisfied: different repos). Lead-review both diffs; one deviation traced to a stale line anchor in my spec; fix spec, relaunch that item.
 6. Checkpoint (`functional`): STOP. Present the cycle-2 plan (behavior changes) with verified findings; user approves, adds one exclusion.
 7. Cycle 2: backend executor writes while a client test agent (`test=sonnet`) runs cycle-1 verification in parallel (rule 4). Test report: 6 PASS, 1 FAIL (spec → execute → review again), 1 BLOCKED on real-device push delivery, onto the needs-human list.
@@ -161,8 +163,4 @@ Task: "Audit and fix our notification subsystem" (a backend repo and a client re
 
 **Claude Code** (primary target): executors are Agent-tool subagents with per-agent `model`, background execution, and this skill's `references/` readable from disk. Everything above works as written.
 
-**OpenAI Codex**: Codex supports the same skill format (a directory with SKILL.md); install per the README. But there is no in-session subagent spawning with per-agent model control, so `exec`/`test`/`parallel` do not literally apply. The doctrine still does: the lead session does scoping, mapping synthesis, verification, spec writing, and review; "executor agents" become separate focused Codex runs or threads, each fed one spec file from `specs/`. Parallelism means multiple Codex sessions, scheduled by the human, so state the concurrency rules in each spec since no single lead can enforce them live.
-
-**Cursor**: same degradation. The lead is your main chat session; executors are background agents or fresh composer/agent sessions given one `specs/` file each. Model choice is per-session via the model picker, not per-spawn.
-
-**Honest limits of porting**: adversarial verification and lead diff review port fully (they are just work the lead does). Background-first synthesis and single-batch parallel launches do not port where there is no subagent API; the human becomes the scheduler. Spec files under `specs/` are the universal interface: write them the same way everywhere.
+**Other platforms (Codex, Cursor, anything with a lead session but no subagent API)**: the doctrine ports; the mechanics degrade. The lead session keeps scoping, verification, spec writing, and diff review — that is just work the lead does. Executors become separate sessions fed one spec file each from `specs/`; the human schedules the parallelism and the concurrency rules must be stated in every spec, since no live lead enforces them. Spec files under `specs/` are the universal interface: write them the same way everywhere. Per-platform install and porting detail: the README's "Install and invoke" and "Limitations" sections.

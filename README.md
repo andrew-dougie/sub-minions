@@ -19,7 +19,7 @@ The pattern rests on two observations. First, lead-model tokens are the scarce r
 ## Features
 
 - **Session args at invocation** — control executor/test models, verification depth, review depth, checkpoint cadence, parallelism, and deploy policy per session (`/sub-minions exec=haiku verify=spot checkpoints=none`); the lead echoes the resolved config and adopts it as the session contract.
-- **Layered verification** — parallel audits, then an adversarial pass where fresh skeptic agents must CONFIRM or REFUTE each load-bearing claim with exact code quotes (premises included, not just claims), then lead review of every diff, then independent PASS/FAIL/BLOCKED testing.
+- **Layered verification** — parallel audits, then an adversarial pass where fresh skeptic agents recommend CONFIRM or REFUTE for each load-bearing claim with exact code quotes (claims quotation can't settle — races, missing code — escalate to the lead instead of being silently refuted; premises verified too, not just claims), then lead review of every diff, then independent PASS/FAIL/BLOCKED testing. Skeptics recommend; the lead rules.
 - **An 8-element executor spec template** — verified context stated as facts, file:line anchors paired with code quotes so line drift can't break execution, frozen-file declarations for safe concurrency, exact verification commands, and a mandatory escape hatch ("STOP and report rather than improvising").
 - **Structured report contracts** — executors return data reports (status, per-item outcomes, deviations, observations-not-acted-on), never prose; test agents return per-scenario PASS/FAIL/BLOCKED with a needs-human list for environment-blocked items.
 - **Concurrency rules** — unlimited read-only agents in parallel, one writer per repo, one driver per stateful resource, cross-repo pipelining.
@@ -94,7 +94,7 @@ Space-separated `key=value` pairs after the skill name. Unknown args are named a
 
 | Arg | Values | Default | Meaning |
 |---|---|---|---|
-| `exec` | `haiku` \| `sonnet` \| `opus` | `sonnet` | Model for implementation executor agents |
+| `exec` | `haiku` \| `sonnet` \| `opus` | `sonnet` | Model for implementation executors AND all read-only agents (mappers, auditors, skeptics) — no agent ever silently inherits the lead's model |
 | `test` | `haiku` \| `sonnet` \| `opus` | value of `exec` | Model for testing/verification agents |
 | `verify` | `off` \| `spot` \| `adversarial` | `adversarial` for multi-finding audits, `spot` for small tasks | Audit-claim verification depth |
 | `review` | `off` \| `lead` \| `independent` | `lead` | `lead` = orchestrator reads every diff; `independent` adds a separate review pass before merge-readiness |
@@ -113,7 +113,7 @@ Copy-paste skeleton with inline guidance: [references/spec-template.md](referenc
 
 ## Limitations
 
-- **Platform asymmetry.** Only Claude Code has in-session subagents with per-agent model choice and background execution, so `exec`/`test`/`parallel` are only literal there. On Codex and Cursor the doctrine still applies, but "executors" are separate sessions or background agents fed spec files from a `specs/` directory, and the human schedules the parallelism.
+- **Platform asymmetry.** Only Claude Code has in-session subagents with per-agent model choice and background execution, so `exec`/`test`/`parallel` are only literal there. On Codex and Cursor the doctrine still applies, but "executors" are separate sessions or background agents fed spec files from a `specs/` directory, the human schedules the parallelism, and the concurrency rules must be stated in every spec since no live lead enforces them. Adversarial verification and lead diff review port fully — they are just work the lead does; spec files under `specs/` are the universal interface.
 - **Concurrency rules are convention, not enforcement.** One-writer-per-repo, one-driver-per-stateful-resource, and file freezes are honored because specs state them and the lead checks them at launch time. Nothing at the platform level prevents two agents from colliding if the lead schedules carelessly.
 - **Verification depth costs real tokens.** Adversarial passes and independent reviews are extra agent runs. The defaults assume multi-cycle work where a false P1 is more expensive than a skeptic pass; for small tasks, collapse the ladder (the skill tells the lead how).
 - **The lead is a single point of failure.** If the lead session dies, recovery depends entirely on master-doc discipline. That is why `master-doc=auto` is the default for multi-cycle work.

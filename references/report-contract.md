@@ -12,6 +12,9 @@ STATUS: COMPLETE | PARTIAL | STOPPED
 COMMITS:
 - <sha> <subject line>
 
+FILES:
+- <path of every file touched, one per line>
+
 ITEMS:
 - Item 1: DONE | SKIPPED | STOPPED — <one line: what was done, or why not>
 - Item 2: ...
@@ -32,7 +35,8 @@ Semantics:
 - `PARTIAL`: some items done and committed; remaining items listed with STOPPED/SKIPPED and reasons. Never commit half an item.
 - `STOPPED`: escape hatch fired. Report the exact mismatch: what the spec said, what reality is (with `file:line` and a short quote), and nothing else attempted after the mismatch.
 - DEVIATIONS is the honesty channel. A deviation reported is a spec bug the lead can fix; a deviation hidden becomes a review-phase incident. Executors are never penalized for reporting deviations or stopping.
-- OBSERVATIONS lets an executor surface adjacent problems without scope-creeping into them.
+- FILES is the lead's review index: the diffs to read and the list to check against this cycle's frozen files, with no discovery pass.
+- OBSERVATIONS lets an executor surface adjacent problems without scope-creeping into them. An observation the lead later acts on re-enters the pipeline as an UNVERIFIED claim — it gets verified per `verify` before driving a spec, never promoted straight to fact.
 
 ## Verification report (test agents)
 
