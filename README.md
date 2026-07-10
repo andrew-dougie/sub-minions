@@ -2,6 +2,12 @@
   <img src="assets/banner.png" alt="/sub-minions" width="100%">
 </p>
 
+<h1 align="center">Stretch your Fable quota ~2x</h1>
+
+<p align="center"><b>~96% of frontier-model results at ~46% of the cost</b>, with ~84% of tokens flowing through cheap models instead of your Fable allowance.<br>Numbers are Anthropic's measurements of this orchestration pattern (<a href="#does-the-economics-actually-hold">sources below</a>). The lead thinks; minions execute.</p>
+
+---
+
 # sub-minions
 
 An agent skill that codifies one orchestration pattern: **the lead model thinks, cheaper models execute.** A frontier-tier lead agent does all the hard work that actually requires a frontier model: scoping with the user, mapping unfamiliar code, adjudicating findings, writing implementation specs, and reviewing every diff. Disposable lower-tier executor agents do everything else: reading many files, making clearly-specified edits, running builds and test scenarios.
