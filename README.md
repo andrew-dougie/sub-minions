@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.png" alt="/sub-minions" width="100%">
+</p>
+
 # sub-minions
 
 An agent skill that codifies one orchestration pattern: **the lead model thinks, cheaper models execute.** A frontier-tier lead agent does all the hard work that actually requires a frontier model: scoping with the user, mapping unfamiliar code, adjudicating findings, writing implementation specs, and reviewing every diff. Disposable lower-tier executor agents do everything else: reading many files, making clearly-specified edits, running builds and test scenarios.
