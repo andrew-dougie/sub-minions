@@ -14,15 +14,24 @@
 
 An agent skill that codifies one orchestration pattern: **the lead model thinks, cheaper models execute.** A frontier-tier lead agent does all the hard work that actually requires a frontier model: scoping with the user, mapping unfamiliar code, adjudicating findings, writing implementation specs, and reviewing every diff. Disposable lower-tier executor agents do everything else: reading many files, making clearly-specified edits, running builds and test scenarios.
 
-The pattern rests on two observations from real multi-repo working sessions. First, lead-model tokens are the scarce resource; a spec good enough that a mid-tier model executes it near-flawlessly is cheaper than having the frontier model type the edits itself, and far cheaper than reviewing a mid-tier model's improvisation. Second, unverified findings are expensive: audit agents produce confident false positives, so sub-minions layers verification: parallel audits, then an adversarial pass where fresh skeptic agents must CONFIRM or REFUTE each load-bearing claim with exact code quotes, then lead review of every diff, then independent end-to-end testing with strict PASS/FAIL/BLOCKED reporting. In the session this was distilled from, the adversarial pass alone killed 2 of 10 "P1" findings before they wasted an implementation cycle.
+The pattern rests on two observations. First, lead-model tokens are the scarce resource: a spec good enough that a mid-tier model executes it near-flawlessly is cheaper than having the frontier model type the edits itself, and far cheaper than reviewing a mid-tier model's improvisation. Second, unverified findings are expensive: audit agents produce confident false positives, so sub-minions layers verification at every stage.
 
-The skill is a directory: `SKILL.md` is the operating doctrine the lead adopts for the session; `references/` holds the copy-paste executor spec template, the report contracts, and the full verification ladder with collapse guidance for small tasks.
+## Features
+
+- **Session args at invocation** — control executor/test models, verification depth, review depth, checkpoint cadence, parallelism, and deploy policy per session (`/sub-minions exec=haiku verify=spot checkpoints=none`); the lead echoes the resolved config and adopts it as the session contract.
+- **Layered verification** — parallel audits, then an adversarial pass where fresh skeptic agents must CONFIRM or REFUTE each load-bearing claim with exact code quotes (premises included, not just claims), then lead review of every diff, then independent PASS/FAIL/BLOCKED testing.
+- **An 8-element executor spec template** — verified context stated as facts, file:line anchors paired with code quotes so line drift can't break execution, frozen-file declarations for safe concurrency, exact verification commands, and a mandatory escape hatch ("STOP and report rather than improvising").
+- **Structured report contracts** — executors return data reports (status, per-item outcomes, deviations, observations-not-acted-on), never prose; test agents return per-scenario PASS/FAIL/BLOCKED with a needs-human list for environment-blocked items.
+- **Concurrency rules** — unlimited read-only agents in parallel, one writer per repo, one driver per stateful resource, cross-repo pipelining.
+- **A living master doc** — scope, findings with verdicts, cycle log, decisions, and deferred items, kept current enough that a fresh lead could resume from it alone.
+- **Right-sized delegation guidance** — delegation has a floor cost, so brief granularity has an optimum; coverage workloads (read a lot, verify many things, edit many sites) delegate well, while discovery work that rewards frontier intuition stays with the lead.
+- **Verification ladder with collapse guidance** — the full ten-rung ladder for big work, and explicit rules for collapsing rungs on small tasks without reordering them.
+
+The skill is a directory: `SKILL.md` is the operating doctrine the lead adopts for the session; `references/` holds the copy-paste executor spec template, the report contracts, and the full verification ladder.
 
 ## Does the economics actually hold?
 
 Anthropic published measurements of exactly this pattern. On BrowseComp, Claude Managed Agents with a **Fable 5 orchestrator + Sonnet 5 worker sub-agents** achieved **96% of solo Fable 5 performance at 46% of the price**, with token-heavy research delegated to Sonnet ([@ClaudeDevs](https://x.com/claudedevs/status/2074606063509528855)). Their [plan-big-execute-small cookbook](https://github.com/anthropics/claude-cookbooks/blob/main/managed_agents/CMA_plan_big_execute_small.ipynb) measured a coverage-research workload at **2.5x cheaper and 3x faster** than a solo frontier agent at matched rigor, with 84% of input tokens billed at the cheap-worker rate.
-
-The same cookbook is the source of three refinements folded into `SKILL.md`: delegation has a floor cost so brief granularity has an optimum (over-fragmenting raises the bill); the advantage is largest on coverage workloads and narrows on discovery workloads that reward frontier intuition; and the verification standard only covers what you put in it, so verify premises, not just claims.
 
 No formal license; shared publicly as-is.
 
