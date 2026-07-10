@@ -1,12 +1,14 @@
 # Executor spec template
 
-Copy everything below the divider into a new spec (inline in the agent prompt, or a file under `specs/` for multi-spec cycles or non-subagent platforms). Replace ALL-CAPS placeholders. The `<!-- ... -->` comments are guidance for the lead writing the spec; delete them before sending, or leave them, executors ignore them either way.
+Copy everything below the divider into a new spec (inline in the agent prompt, or a file under `specs/` for multi-spec cycles). Replace ALL-CAPS placeholders. The `<!-- ... -->` comments are guidance for the lead writing the spec; delete them before sending, or leave them, executors ignore them either way.
 
 Rules of thumb while filling this in:
 
 - Every fact you state in Verified Context must actually be verified (by a mapper, a skeptic, or your own reading of the cited lines). The executor will build on it without checking.
 - If a work item says "figure out" or "choose the best", the spec is not done. Decide, then write the mechanism.
 - Line numbers drift. Anchor with `file:line` PLUS a short unique code quote so the executor can relocate the site if lines moved. A moved-but-findable anchor is fine; a missing one triggers the escape hatch.
+- As short as completeness allows: the 8 elements are required, elaboration is not. Typical spec: 300–800 words. Compress transcription and restatement, never the mechanism or the WHY — the escape hatch covers the residual.
+- Large inventories (site lists, file censuses, scenario matrices) belong in a blessed artifact file the reporting agent wrote (e.g. `specs/sites-cycle2.md`), read and verified by you, then referenced from the work item — not retyped into the spec.
 - The spec is done when a competent stranger could execute it without asking you anything.
 
 ---
@@ -31,7 +33,7 @@ Rules of thumb while filling this in:
 
 ## 3. Work items
 
-<!-- Numbered. Each item: WHERE (file:line + short quote), WHY (the concrete failure scenario, so the executor understands intent when code has drifted), WHAT (the exact mechanism: names, signatures, control flow). -->
+<!-- Numbered. Each item: WHERE (file:line + short quote), WHY (the concrete failure scenario, so the executor understands intent when code has drifted), WHAT (the exact mechanism: names, signatures, control flow). For many identical sites, WHERE may be a blessed artifact file ("every site in specs/sites-cycle2.md; the list is verified") instead of an enumeration. -->
 
 ### Item 1: SHORT NAME
 

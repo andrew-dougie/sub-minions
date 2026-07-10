@@ -38,9 +38,9 @@ On invocation, ECHO the resolved configuration as a short table (arg, value, sou
 
 **Test agents (`test` model):** run verification scenarios and return structured PASS/FAIL/BLOCKED results. They never fix what they find.
 
-**Model binding:** every subagent you launch runs at the `exec` model (test agents at `test`) unless you deliberately escalate a specific launch to a stronger model and say so. Never let a launch silently inherit your own model — on platforms where an unspecified model means "same as parent", an unbound mapper burns lead-tier tokens on exactly the work this skill exists to delegate.
+**Model binding:** every subagent you launch runs at the `exec` model (test agents at `test`) unless you deliberately escalate a specific launch to a stronger model and say so. Never let a launch silently inherit your own model — an Agent call with no `model` inherits yours, and an unbound mapper burns lead-tier tokens on exactly the work this skill exists to delegate.
 
-An executor that improvises is disposable: kill it, fix the spec, launch a fresh one. Never negotiate with a confused executor; the spec was the problem. But an executor that fires the escape hatch is not confused — it stopped cleanly, did nothing after the mismatch, and still holds all its context. If the platform can continue a spawned agent (SendMessage in Claude Code), send it the one-line spec correction instead of relaunching: one delta round, then kill and relaunch if it is still stuck.
+An executor that improvises is disposable: kill it, fix the spec, launch a fresh one. Never negotiate with a confused executor; the spec was the problem. But an executor that fires the escape hatch is not confused — it stopped cleanly, did nothing after the mismatch, and still holds all its context. Send it the one-line spec correction via SendMessage instead of relaunching: one delta round, then kill and relaunch if it is still stuck.
 
 ## 3. Phase ladder
 
@@ -95,9 +95,11 @@ Specs are the product of your thinking and the whole reason executors can be che
 7. **Report contract**: "your final message is a data report, not prose" plus the exact fields (see `references/report-contract.md`).
 8. **Escape hatch**, verbatim in every spec: *"If reality materially mismatches this spec (file missing, code moved, precondition false, instruction ambiguous in a way that matters), STOP and report the mismatch rather than improvising."*
 
-Calibration: if you find yourself writing "figure out the best way to...", stop; that is your job, not the executor's. Go figure it out, then write the mechanism. A spec is done when a competent stranger could execute it without asking you anything.
+Calibration: if you find yourself writing "figure out the best way to...", stop; that is your job, not the executor's. Go figure it out, then write the mechanism. A spec is done when a competent stranger could execute it without asking you anything — not when it pre-answers every question they might theoretically ask; the escape hatch exists for the residual. The 8 elements are required; elaboration is not. Typical spec: 300–800 words. Compress transcription and restatement, never the mechanism or the WHY.
 
-For platforms without in-session subagents, and for any multi-spec cycle, write specs to files under `specs/` (e.g. `specs/cycle2-backend.md`) so any executor surface can consume them and the master doc can link them.
+**Bless artifacts, don't retype them.** When a work item's substance is an inventory a cheap agent already produced (a site list, a file census, a scenario matrix), have the reporting agent write it to a file in spec-ready format — anchor + quote per entry, e.g. `specs/sites-cycle2.md` — then read the artifact yourself (an unread artifact is an unverified premise) and reference it from the spec: "apply the mechanism to every site in `specs/sites-cycle2.md`; that list is verified, treat it as ground truth." Your output tokens go to the mechanism and the judgment; the transcription never passes through you.
+
+For any multi-spec cycle, write specs to files under `specs/` (e.g. `specs/cycle2-backend.md`) so the master doc can link them and a fresh lead could re-dispatch them.
 
 ## 7. Execution, review, and testing
 
@@ -134,12 +136,15 @@ These rules prevented every collision. They are conventions you enforce through 
 
 - Per `master-doc`: for multi-cycle work, maintain `<TASK>_MASTER.md` at the workspace root as a running log: scope and approval contract, resolved args, maps (or links), findings with verification verdicts, cycle log (spec → execution → review outcome), decisions and their reasons, the needs-human list, deferred items.
 - Update it at every phase boundary, not retrospectively. The test: if this session died right now, could a fresh lead resume from the master doc alone? If no, the doc is behind.
-- If the platform provides persistent cross-session memory, update it at milestones (cycle merged, contract changed, major decision) with pointers into the master doc, not duplicated content.
+- Update persistent cross-session memory (when available) at milestones — cycle merged, contract changed, major decision — with pointers into the master doc, not duplicated content.
 
 ## 10. Token economics
 
 - Lead tokens go to: thinking, slice design, adjudication, specs, diff review, user communication.
 - Executor tokens go to: reading many files, editing, building, testing.
+- **Lead OUTPUT is the scarcest token class** — it costs several times lead input, which in turn costs several times executor tokens. Prefer designs that convert lead output into lead input: read and bless a cheap agent's artifact instead of retyping its contents; reference verified artifacts by path in specs (Section 6). Reading is cheap; writing is not.
+- **Savings come from stripping clerical work off the lead, never from thinning its judgment.** UI design, architecture, product and feature suggestions, and anything where taste or delight is the value get the lead's full depth, unabridged — the brevity and delegation rules apply to transcription and coverage, not to thinking. Protecting that is the point of the whole arbitrage: you save frontier tokens on copying so you can spend them freely on designing.
+- `exec` is a default, not a straitjacket: downgrade an individual purely-mechanical spec (renames, count-verifiable bulk edits, scripted scenario runs) to a cheaper model when the spec leaves nothing to judgment, and say so at launch. Never upgrade a spec beyond `exec` to compensate for an underspecified mechanism — finish the thinking instead.
 - All reporting agents return CONCLUSIONS with references, never file dumps. If an agent's report is mostly quoted code, its instructions were wrong; tighten the required output shape next launch.
 - Prefer relaunching a cheap executor with a better spec over a long corrective dialogue with a drifting one.
 - **Delegation has a floor cost** (agent setup + context handoff). Brief granularity has an optimum: splitting the same work into more, narrower specs raises total cost instead of lowering it. Merge related items into one spec when a single executor can hold them; split only along genuine parallelism or ownership boundaries. (Anthropic's managed-agents cookbook measured this directly: over-fragmenting briefs raised the bill.)
@@ -159,8 +164,3 @@ Task: "Audit and fix our notification subsystem" (a backend repo and a client re
 7. Cycle 2: backend executor writes while a client test agent (`test=sonnet`) runs cycle-1 verification in parallel (rule 4). Test report: 6 PASS, 1 FAIL (spec → execute → review again), 1 BLOCKED on real-device push delivery, onto the needs-human list.
 8. `review=lead`, so no independent pass; declare merge-readiness after final lead review. Update master doc and memory; report deferred items and the needs-human list to the user.
 
-## 12. Platform adaptation
-
-**Claude Code** (primary target): executors are Agent-tool subagents with per-agent `model`, background execution, and this skill's `references/` readable from disk. Everything above works as written.
-
-**Other platforms (Codex, Cursor, anything with a lead session but no subagent API)**: the doctrine ports; the mechanics degrade. The lead session keeps scoping, verification, spec writing, and diff review — that is just work the lead does. Executors become separate sessions fed one spec file each from `specs/`; the human schedules the parallelism and the concurrency rules must be stated in every spec, since no live lead enforces them. Spec files under `specs/` are the universal interface: write them the same way everywhere. Per-platform install and porting detail: the README's "Install and invoke" and "Limitations" sections.
