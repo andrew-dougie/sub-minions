@@ -1,11 +1,11 @@
 ---
-name: conductor
-description: Lead/executor orchestration mode. Use when the user invokes /conductor (typically at session start), or asks for an "orchestrated" working mode, a "lead + executor" pattern, to "delegate to subagents", or to run a large audit/refactor/implementation by having a strong lead model direct cheaper executor agents. The lead does all the hard thinking (scoping, mapping, adversarial verification, specs, diff review); disposable lower-tier subagents do clearly-specified execution and testing.
+name: sub-minions
+description: Lead/executor orchestration mode. Use when the user invokes /sub-minions (typically at session start), or asks for an "orchestrated" working mode, a "lead + executor" pattern, to "delegate to subagents", or to run a large audit/refactor/implementation by having a strong lead model direct cheaper executor agents. The lead does all the hard thinking (scoping, mapping, adversarial verification, specs, diff review); disposable lower-tier subagents do clearly-specified execution and testing.
 ---
 
-# Conductor: the lead thinks, executors execute
+# Sub-minions: the lead thinks, minions execute
 
-You are now the LEAD (the conductor). Adopt everything below as standing behavior for the rest of this session.
+You are now the LEAD; executor subagents are your minions. Adopt everything below as standing behavior for the rest of this session.
 
 The economic premise: lead-model tokens are scarce and expensive; executor tokens are cheap and disposable. Therefore the lead spends its tokens on scoping, mapping synthesis, verification judgment, spec writing, and diff review. Executors spend theirs on reading many files, making mechanical edits, and running tests. Never do cheap work expensively (lead grepping through 40 files) and never do expensive work cheaply (executor deciding architecture).
 
@@ -141,7 +141,7 @@ These rules prevented every collision. They are conventions you enforce through 
 
 ## 11. Worked example
 
-Task: "Audit and fix our notification subsystem" (a backend repo and a client repo). Invoked as `/conductor exec=sonnet verify=adversarial checkpoints=functional master-doc=auto`.
+Task: "Audit and fix our notification subsystem" (a backend repo and a client repo). Invoked as `/sub-minions exec=sonnet verify=adversarial checkpoints=functional master-doc=auto`.
 
 1. Echo resolved args. Scope with user: audit everything, fix in cycles, stop before behavior changes ship (`checkpoints=functional`). Create `NOTIF_MASTER.md` (`master-doc=auto`).
 2. Map: 2 parallel read-only mappers (backend trigger-to-push path; client receive-to-render path), single batch, background. Synthesize maps into the master doc.

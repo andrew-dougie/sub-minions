@@ -1,8 +1,8 @@
-# conductor
+# sub-minions
 
 An agent skill that codifies one orchestration pattern: **the lead model thinks, cheaper models execute.** A frontier-tier lead agent does all the hard work that actually requires a frontier model: scoping with the user, mapping unfamiliar code, adjudicating findings, writing implementation specs, and reviewing every diff. Disposable lower-tier executor agents do everything else: reading many files, making clearly-specified edits, running builds and test scenarios.
 
-The pattern rests on two observations from real multi-repo working sessions. First, lead-model tokens are the scarce resource; a spec good enough that a mid-tier model executes it near-flawlessly is cheaper than having the frontier model type the edits itself, and far cheaper than reviewing a mid-tier model's improvisation. Second, unverified findings are expensive: audit agents produce confident false positives, so conductor layers verification: parallel audits, then an adversarial pass where fresh skeptic agents must CONFIRM or REFUTE each load-bearing claim with exact code quotes, then lead review of every diff, then independent end-to-end testing with strict PASS/FAIL/BLOCKED reporting. In the session this was distilled from, the adversarial pass alone killed 2 of 10 "P1" findings before they wasted an implementation cycle.
+The pattern rests on two observations from real multi-repo working sessions. First, lead-model tokens are the scarce resource; a spec good enough that a mid-tier model executes it near-flawlessly is cheaper than having the frontier model type the edits itself, and far cheaper than reviewing a mid-tier model's improvisation. Second, unverified findings are expensive: audit agents produce confident false positives, so sub-minions layers verification: parallel audits, then an adversarial pass where fresh skeptic agents must CONFIRM or REFUTE each load-bearing claim with exact code quotes, then lead review of every diff, then independent end-to-end testing with strict PASS/FAIL/BLOCKED reporting. In the session this was distilled from, the adversarial pass alone killed 2 of 10 "P1" findings before they wasted an implementation cycle.
 
 The skill is a directory: `SKILL.md` is the operating doctrine the lead adopts for the session; `references/` holds the copy-paste executor spec template, the report contracts, and the full verification ladder with collapse guidance for small tasks.
 
@@ -15,19 +15,19 @@ The repo root is the skill directory (`SKILL.md` at root), so installation is co
 ### Claude Code
 
 ```bash
-git clone git@github.com:andrew-dougie/conductor.git
+git clone git@github.com:andrew-dougie/sub-minions.git
 # global (all projects):
-cp -R conductor ~/.claude/skills/conductor
+cp -R sub-minions ~/.claude/skills/sub-minions
 # or per-project:
-cp -R conductor <project>/.claude/skills/conductor
+cp -R sub-minions <project>/.claude/skills/sub-minions
 # symlink works too if the clone location is stable:
-ln -s "$(pwd)/conductor" ~/.claude/skills/conductor
+ln -s "$(pwd)/sub-minions" ~/.claude/skills/sub-minions
 ```
 
-Invoke: `/conductor` at session start, with optional args:
+Invoke: `/sub-minions` at session start, with optional args:
 
 ```
-/conductor exec=sonnet test=haiku checkpoints=every-cycle
+/sub-minions exec=sonnet test=haiku checkpoints=every-cycle
 ```
 
 Skills also auto-trigger by description, so asking for "orchestrated mode" or "lead + executor with subagents" can activate it without the slash command. Claude Code is the primary target: executor agents are real subagents with per-agent model selection and background execution.
@@ -37,29 +37,29 @@ Skills also auto-trigger by description, so asking for "orchestrated mode" or "l
 Codex supports the same skill format (a directory containing `SKILL.md`). Skills live in `$CODEX_HOME/skills/` (default `~/.codex/skills/`):
 
 ```bash
-git clone git@github.com:andrew-dougie/conductor.git
-cp -R conductor ~/.codex/skills/conductor
+git clone git@github.com:andrew-dougie/sub-minions.git
+cp -R sub-minions ~/.codex/skills/sub-minions
 # restart Codex to pick up new skills
 ```
 
-Fallback for older Codex versions: custom prompts (now deprecated by OpenAI in favor of skills, but still functional). Copy the `SKILL.md` body without the YAML frontmatter to `~/.codex/prompts/conductor.md`; it then appears in the `/` menu (as `/conductor` or `/prompts:conductor` depending on version). Only top-level `.md` files in that folder are scanned. For always-on doctrine instead of on-demand invocation, append the SKILL.md body to your project's `AGENTS.md`.
+Fallback for older Codex versions: custom prompts (now deprecated by OpenAI in favor of skills, but still functional). Copy the `SKILL.md` body without the YAML frontmatter to `~/.codex/prompts/sub-minions.md`; it then appears in the `/` menu (as `/sub-minions` or `/prompts:sub-minions` depending on version). Only top-level `.md` files in that folder are scanned. For always-on doctrine instead of on-demand invocation, append the SKILL.md body to your project's `AGENTS.md`.
 
-Args are passed as free text after the command (`/conductor exec=sonnet checkpoints=none`); the skill parses them from the invocation text, so no special argument plumbing is needed. Conventions verified against OpenAI's docs as of July 2026; if paths have moved, `~/.codex/skills/` (skill) and `AGENTS.md` (always-on) are the degrade-gracefully options.
+Args are passed as free text after the command (`/sub-minions exec=sonnet checkpoints=none`); the skill parses them from the invocation text, so no special argument plumbing is needed. Conventions verified against OpenAI's docs as of July 2026; if paths have moved, `~/.codex/skills/` (skill) and `AGENTS.md` (always-on) are the degrade-gracefully options.
 
 ### Cursor
 
 Cursor commands are Markdown files invoked via `/` in chat:
 
 ```bash
-git clone git@github.com:andrew-dougie/conductor.git
+git clone git@github.com:andrew-dougie/sub-minions.git
 mkdir -p <project>/.cursor/commands
-cp conductor/SKILL.md <project>/.cursor/commands/conductor.md
-cp -R conductor/references <project>/.cursor/commands/conductor-references
+cp sub-minions/SKILL.md <project>/.cursor/commands/sub-minions.md
+cp -R sub-minions/references <project>/.cursor/commands/sub-minions-references
 # or globally for all projects:
-cp conductor/SKILL.md ~/.cursor/commands/conductor.md
+cp sub-minions/SKILL.md ~/.cursor/commands/sub-minions.md
 ```
 
-Invoke by typing `/conductor` in chat; args as free text after it. Update the `references/` paths mentioned in the command file if you relocate them (the lead can also just be told where they are). Alternative: install as a rule in `<project>/.cursor/rules/` and @-mention it manually. Conventions verified as of July 2026 (commands shipped in Cursor 1.6+).
+Invoke by typing `/sub-minions` in chat; args as free text after it. Update the `references/` paths mentioned in the command file if you relocate them (the lead can also just be told where they are). Alternative: install as a rule in `<project>/.cursor/rules/` and @-mention it manually. Conventions verified as of July 2026 (commands shipped in Cursor 1.6+).
 
 ## Args reference
 
