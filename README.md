@@ -14,7 +14,7 @@
 
 - **Stretch your Fable quota.** On coverage-heavy work — audits, migrations, bulk refactors, scenario testing — 22–42% less frontier output at identical, independently-graded quality. The tokens that move to Sonnet are the reading and typing, never the thinking.
 - **Never at taste's expense.** "Is this taste-critical?" is the *first* routing question: UI, architecture, naming, product feel, and every "what do you suggest?" get the lead's full depth, unabridged, no matter how small. Saving frontier tokens on copying is what pays for spending them freely on designing.
-- **Near-zero overhead when delegation doesn't pay.** "Do it myself" is a first-class routing outcome, so on small or taste-led work the skill stays out of the way — the worst case is roughly vanilla, not a process tax.
+- **Safe to invoke at the start of any session.** The skill's resting state is vanilla: the lead behaves exactly as if the skill weren't loaded until a chunk of work passes an explicit launch justification test (name the mass moving off the frontier model AND the mechanical check that verifies it — or do it yourself). Its only unconditional cost is its own text (~2.5k cached tokens); everything else is conditional on a justified route, so the worst case is vanilla, not a process tax.
 - **A quality mechanism vanilla doesn't have.** Every self-performed audit gets a cheap fresh-eyes backstop sweep; in testing it caught the one bug the lead missed, for cents.
 - **Everything delegated is reviewed.** The lead reads every executor diff before it ships; deviations mean a corrected brief and a fresh executor, never silent drift.
 
@@ -28,7 +28,7 @@ Invoked at session start (`/sub-minions`), the skill turns the lead into a route
 4. **Big but impossible to brief tightly, and not taste-critical?** → an Opus-tier escape valve, used rarely and stated explicitly.
 5. **A huge separable read?** → a scout in a clean context that returns a distilled brief — but only when it *replaces* reading the lead would otherwise do.
 
-Under uncertainty the router routes **up**, toward the lead: misrouted mechanical work bounces back cheaply off verification, misrouted taste work fails silently. Genuinely large multi-cycle work can opt into campaign mode — briefs as files, a living master doc a fresh session could resume from, and user checkpoints before behavior ships.
+Under uncertainty the router routes **up**, toward the lead: misrouted mechanical work bounces back cheaply off verification, misrouted taste work fails silently. And no launch happens without passing the justification test — one line naming the reading/typing mass that moves off the lead and the mechanical check that verifies the result; delegating because the option exists is a doctrine violation. Genuinely large multi-cycle work can opt into campaign mode — briefs as files, a living master doc a fresh session could resume from, and user checkpoints before behavior ships.
 
 ## Under the hood
 
