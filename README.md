@@ -2,44 +2,44 @@
   <img src="assets/banner.png" alt="/sub-minions" width="100%">
 </p>
 
-<h1 align="center">Stretch your Fable quota ~2x</h1>
+<h1 align="center">Spend Fable where it matters</h1>
 
-<p align="center"><b>~96% of frontier-model results at ~46% of the cost</b>, with ~84% of tokens flowing through cheap models instead of your Fable allowance.</p>
-
-<p align="center"><sub><i>Numbers are Anthropic's measurements of this orchestration pattern (<a href="#does-the-economics-actually-hold">sources below</a>). The lead thinks; minions execute.</i></sub></p>
+<p align="center"><b>A frontier-token routing discipline.</b> Taste and judgment stay with the frontier lead at full depth; verifiable mechanical work runs on cheap executors; below the delegation floor the lead just does the work itself.</p>
 
 ---
 
 # sub-minions
 
-An agent skill that codifies one orchestration pattern: **the lead model thinks, cheaper models execute.** A frontier-tier lead agent does all the hard work that actually requires a frontier model: scoping with the user, mapping unfamiliar code, adjudicating findings, writing implementation specs, and reviewing every diff. Disposable lower-tier executor agents do everything else: reading many files, making clearly-specified edits, running builds and test scenarios.
+An agent skill that codifies one discipline: **route every task by taste, verifiability, and reading mass — then protect the routing with review.** The frontier lead (Fable) keeps everything where quality depends on judgment no mechanical check can score: UI and UX, architecture, API shape, naming, product feel, "what should we build?" Work that is mechanically verifiable and heavy in reading or typing — bulk edits, spec'd fixes, migrations, scenario testing, coverage reading — is delegated to cheap executor subagents against tight briefs. Tiny tasks the lead just does: below the delegation floor, a brief costs more than the diff.
 
-The pattern rests on two observations. First, lead-model tokens are the scarce resource: a spec good enough that a mid-tier model executes it near-flawlessly is cheaper than having the frontier model type the edits itself, and far cheaper than reviewing a mid-tier model's improvisation. Second, unverified findings are expensive: audit agents produce confident false positives, so sub-minions layers verification at every stage.
+This is the second design of this skill, and it was rebuilt from measurement rather than theory. The first design was a full orchestration mode (ladder of phases, mapper/auditor/skeptic castes, standing machinery). It worked at scale and lost badly below it — see the evidence section. The routing design keeps what measurement validated and deletes the bureaucracy.
 
 ## Features
 
-- **Session args at invocation** — control executor/test models, verification depth, review depth, checkpoint cadence, parallelism, and deploy policy per session (`/sub-minions exec=haiku verify=spot checkpoints=none`); the lead echoes the resolved config and adopts it as the session contract.
-- **Layered verification** — parallel audits, then an adversarial pass where fresh skeptic agents recommend CONFIRM or REFUTE for each load-bearing claim with exact code quotes (claims quotation can't settle — races, missing code — escalate to the lead instead of being silently refuted; premises verified too, not just claims), then lead review of every diff, then independent PASS/FAIL/BLOCKED testing. Skeptics recommend; the lead rules.
-- **An 8-element executor spec template** — verified context stated as facts, file:line anchors paired with code quotes so line drift can't break execution, frozen-file declarations for safe concurrency, exact verification commands, and a mandatory escape hatch ("STOP and report rather than improvising").
-- **Blessed artifacts, not retyping** — cheap agents write large inventories (site lists, censuses, scenario matrices) to spec-ready files; the lead reads and verifies them, then references them by path, so transcription never flows through frontier output tokens. Specs stay short by design: compress transcription, never the mechanism or the why.
-- **Judgment stays frontier** — savings come from stripping clerical work off the lead, never from thinning its thinking. UI design, architecture, and product suggestions get the lead's full depth, unabridged; that's what the saved tokens are for.
-- **Structured report contracts** — executors return data reports (status, per-item outcomes, deviations, observations-not-acted-on), never prose; test agents return per-scenario PASS/FAIL/BLOCKED with a needs-human list for environment-blocked items.
-- **Concurrency rules** — unlimited read-only agents in parallel, one writer per repo, one driver per stateful resource, cross-repo pipelining.
-- **A living master doc** — scope, findings with verdicts, cycle log, decisions, and deferred items, kept current enough that a fresh lead could resume from it alone.
-- **Right-sized delegation guidance** — delegation has a floor cost, so brief granularity has an optimum; coverage workloads (read a lot, verify many things, edit many sites) delegate well, while discovery work that rewards frontier intuition stays with the lead.
-- **Verification ladder with collapse guidance** — the full ten-rung ladder for big work, and explicit rules for collapsing rungs on small tasks without reordering them.
+- **A five-way routing table, applied as a reflex** — taste-critical → lead at full depth, always; tiny → lead (brief would outweigh the diff); verifiable + heavy → cheap executor; big-but-unbriefable and not taste-critical → Opus escape valve; big separable reads → lead-model *scouts* that absorb huge reading in a clean context and return distilled briefs (justified by context economics, not rate). Under uncertainty, route up: misrouted mechanical work bounces back cheaply, misrouted taste work fails silently.
+- **Judgment stays frontier, structurally** — taste never routes down because taste is the first routing criterion, not a guardrail bolted on. The savings exist so the lead can think, design, and delight without rationing.
+- **8-element briefs** — verified facts (anchored `file:line` + quote), the decided mechanism, frozen-file constraints, exact verification commands, the commit message, a structured report contract, and a mandatory escape hatch ("STOP and report rather than improvising"). Typical brief: 200–600 words — compress transcription, never the mechanism or the why.
+- **Blessed artifacts, not retyping** — bulk inventories (site lists, censuses) are written to spec-ready files by whoever found them, verified by the lead, and referenced by path, so transcription never flows through frontier output tokens.
+- **Explicit model binding, no continuations** — every launch names its model (unbound subagents silently inherit the lead's model and bill at frontier rates); corrections relaunch against the corrected brief because messaged agents resume at the lead's model (observed in the field).
+- **Review as the quality floor** — the lead reads every delegated diff (input tokens: the cheap direction); mechanical bulk gets pattern-plus-count verification; empirical checks ("write the failing test first") beat opinion passes at any tier.
+- **Context hygiene** — large reports land as files with ten-line summaries; the resident session stays skinny because everything in it is re-read on every later turn.
+- **Campaign mode, opt-in by judgment** — genuinely large multi-cycle work adds briefs-as-files under `specs/`, a living master doc a fresh lead could resume from, and user checkpoints before behavior ships. It is a paragraph, not a ladder.
 
-The skill is a directory: `SKILL.md` is the operating doctrine the lead adopts for the session; `references/` holds the copy-paste executor spec template, the report contracts, and the full verification ladder.
+The skill is a directory: `SKILL.md` is the doctrine; `references/` holds the brief template and the report contracts.
 
-## Does the economics actually hold?
+## The evidence
 
-Anthropic published measurements of exactly this pattern. On BrowseComp, Claude Managed Agents with a **Fable 5 orchestrator + Sonnet 5 worker sub-agents** achieved **96% of solo Fable 5 performance at 46% of the price**, with token-heavy research delegated to Sonnet ([@ClaudeDevs](https://x.com/claudedevs/status/2074606063509528855)). Their [plan-big-execute-small cookbook](https://github.com/anthropics/claude-cookbooks/blob/main/managed_agents/CMA_plan_big_execute_small.ipynb) measured a coverage-research workload at **2.5x cheaper and 3x faster** than a solo frontier agent at matched rigor, with 84% of input tokens billed at the cheap-worker rate.
+Two data points shaped this design, one from Anthropic and one from our own head-to-head.
+
+**At scale, delegation economics are real.** Anthropic measured a Fable 5 orchestrator with Sonnet 5 workers at **96% of solo Fable 5 performance for 46% of the price** on BrowseComp ([@ClaudeDevs](https://x.com/claudedevs/status/2074606063509528855)), and their [plan-big-execute-small cookbook](https://github.com/anthropics/claude-cookbooks/blob/main/managed_agents/CMA_plan_big_execute_small.ipynb) measured a coverage-research workload at **2.5× cheaper and 3× faster**, with 84% of input tokens billed at the cheap-worker rate. The win comes from fanning out ~900k tokens of *reading* at worker rates.
+
+**Below the floor, orchestration loses — badly.** We ran a controlled head-to-head on a 375-line seeded-bug fixture (10 planted contract violations, sealed answer key): vanilla Fable solo scored a perfect 10/10 with zero false positives for **$3.01 in 5.7 minutes**; the v1 orchestration mode scored the same perfect 10/10 for **$7.88 in 12.9 minutes**, spending 45% *more* frontier output than solo — pure coordination overhead with nothing to amortize against. Same quality, 2.6× the price. That result is why this skill routes per task and treats "do it myself" as a first-class outcome instead of running standing machinery.
 
 No formal license; shared publicly as-is.
 
 ## Install and invoke
 
-This skill is built for Claude Code — executors are real in-session subagents with per-agent model selection and background execution, which is what the whole pattern depends on. The repo root is the skill directory (`SKILL.md` at root), so installation is copying or symlinking this directory into the right place:
+This skill is built for Claude Code — executors are real in-session subagents with per-agent model selection and background execution, which is what routing depends on. The repo root is the skill directory (`SKILL.md` at root), so installation is copying or symlinking this directory into the right place:
 
 ```bash
 git clone https://github.com/andrew-dougie/sub-minions.git
@@ -54,10 +54,10 @@ ln -s "$(pwd)/sub-minions" ~/.claude/skills/sub-minions
 Invoke: `/sub-minions` at session start, with optional args:
 
 ```
-/sub-minions exec=sonnet test=haiku checkpoints=every-cycle
+/sub-minions exec=sonnet review=lead
 ```
 
-Skills also auto-trigger by description, so asking for "orchestrated mode" or "lead + executor with subagents" can activate it without the slash command.
+Skills also auto-trigger by description, so asking to "save Fable tokens" or "delegate mechanical work to cheaper models" can activate it without the slash command.
 
 ## Args reference
 
@@ -65,29 +65,17 @@ Space-separated `key=value` pairs after the skill name. Unknown args are named a
 
 | Arg | Values | Default | Meaning |
 |---|---|---|---|
-| `exec` | `haiku` \| `sonnet` \| `opus` | `sonnet` | Model for implementation executors AND all read-only agents (mappers, auditors, skeptics) — no agent ever silently inherits the lead's model |
-| `test` | `haiku` \| `sonnet` \| `opus` | value of `exec` | Model for testing/verification agents |
-| `verify` | `off` \| `spot` \| `adversarial` | `adversarial` for multi-finding audits, `spot` for small tasks | Audit-claim verification depth |
-| `review` | `off` \| `lead` \| `independent` | `lead` | `lead` = orchestrator reads every diff; `independent` adds a separate review pass before merge-readiness |
-| `checkpoints` | `none` \| `functional` \| `every-cycle` | `functional` | When to stop for user approval (`functional` = before functional/user-visible changes ship) |
-| `parallel` | integer | `4` | Soft cap on concurrent background agents |
+| `exec` | `haiku` \| `sonnet` \| `opus` | `sonnet` | Default model for delegated work; the lead may downgrade a pure-mechanical brief to haiku |
+| `review` | `lead` \| `off` | `lead` | `lead` = the lead reads every delegated diff before it ships |
+| `parallel` | integer | `4` | Soft cap on concurrent subagents |
 | `deploys` | `never` \| `ask` \| `safe` | `ask` | Whether agents may deploy (`safe` = only non-destructive, no schema/data impact) |
-| `master-doc` | path \| `auto` \| `off` | `auto` | Living master doc (`auto` = `<TASK>_MASTER.md` at workspace root for multi-cycle work) |
-
-On invocation the lead echoes the resolved configuration as a table and adopts it as standing session behavior.
-
-## Anatomy of a good executor spec
-
-The spec is why executors can be cheap: every design decision is made by the lead before delegation. Each spec carries eight elements: (1) exact repo path, branch, and base ref; (2) verified context stated as facts the executor never re-derives; (3) numbered work items, each with `file:line` anchors, the failure scenario it fixes, and the exact mechanism; (4) constraints including frozen files owned by other agents; (5) verification commands with expected clean output; (6) the full commit message including attribution trailer; (7) a structured report contract ("your final message is a data report, not prose"); (8) the escape hatch: stop and report on any material mismatch rather than improvising. That last line is the single most valuable one; it converts every would-be runaway into a cheap spec fix. Specs are as short as completeness allows (typically 300–800 words), and bulk site lists live in verified artifact files referenced by path rather than being retyped by the lead.
-
-Copy-paste skeleton with inline guidance: [references/spec-template.md](references/spec-template.md). Report formats: [references/report-contract.md](references/report-contract.md). The full phase ladder with skip guidance: [references/verification-ladder.md](references/verification-ladder.md).
 
 ## Limitations
 
-- **Claude Code only.** The pattern depends on in-session subagents with per-agent model choice and background execution; no other agent platform currently provides them, so this skill does not target other platforms.
-- **Agent continuations inherit the lead's model.** In Claude Code, messaging a subagent (SendMessage) can resume it at the session model rather than its launched model — observed in practice silently turning Sonnet executors into frontier-priced ones mid-run. The skill therefore corrects executors by relaunching against the spec file, never by continuation.
-- **Concurrency rules are convention, not enforcement.** One-writer-per-repo, one-driver-per-stateful-resource, and file freezes are honored because specs state them and the lead checks them at launch time. Nothing at the platform level prevents two agents from colliding if the lead schedules carelessly.
-- **Verification depth costs real tokens.** Adversarial passes and independent reviews are extra agent runs. The defaults assume multi-cycle work where a false P1 is more expensive than a skeptic pass; for small tasks, collapse the ladder (the skill tells the lead how).
-- **The lead is a single point of failure.** If the lead session dies, recovery depends entirely on master-doc discipline. That is why `master-doc=auto` is the default for multi-cycle work.
+- **Claude Code only.** Routing depends on in-session subagents with per-agent model choice and background execution; no other agent platform currently provides them.
+- **Routing is judgment, not enforcement.** The table tells the lead how to route; nothing stops a bad glance from misclassifying a task. The route-up-under-uncertainty rule and mandatory diff review are the containment, and they trade some savings for quality by design.
+- **Agent continuations inherit the lead's model.** In Claude Code, messaging a subagent (SendMessage) can resume it at the session model rather than its launched model — observed in practice silently turning Sonnet executors into frontier-priced ones mid-run. The skill therefore corrects executors by relaunching against the brief, never by continuation.
+- **Concurrency rules are convention, not enforcement.** One-writer-per-repo, one-driver-per-stateful-resource, and file freezes are honored because briefs state them and the lead checks them at launch time.
+- **Savings scale with the work's shape.** Coverage-heavy sessions can push most tokens to cheap tiers; pure-taste sessions save ~0% — which is the design working as intended, not failing.
 
 Issues and suggestions welcome.
