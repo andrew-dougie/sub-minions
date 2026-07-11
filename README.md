@@ -2,28 +2,40 @@
   <img src="assets/banner.png" alt="/sub-minions" width="100%">
 </p>
 
-<h1 align="center">Spend Fable where it matters</h1>
+<h1 align="center">Same quality. Up to 42% less Fable.</h1>
 
-<p align="center"><b>A frontier-token routing discipline.</b> Taste and judgment stay with the frontier lead at full depth; verifiable mechanical work runs on cheap executors; below the delegation floor the lead just does the work itself.</p>
+<p align="center"><b>A routing discipline for your frontier lead:</b> design, judgment, and taste stay at full Fable depth; verifiable mechanical work runs on cheap Sonnet executors; small jobs it simply does itself. Measured at full quality parity in every regime tested.</p>
 
 ---
 
 # sub-minions
 
-An agent skill that codifies one discipline: **route every task by taste, verifiability, and reading mass — then protect the routing with review.** The frontier lead (Fable) keeps everything where quality depends on judgment no mechanical check can score: UI and UX, architecture, API shape, naming, product feel, "what should we build?" Work that is mechanically verifiable and heavy in reading or typing — bulk edits, spec'd fixes, migrations, scenario testing, coverage reading — is delegated to cheap executor subagents against tight briefs. Tiny tasks the lead just does: below the delegation floor, a brief costs more than the diff.
+## Why use it
 
-There is deliberately no standing machinery — no phase ladder, no always-on orchestration mode. Routing is a per-task reflex, and "the lead does it itself" is a first-class outcome. The design is grounded in measurement (see the evidence section): delegation pays off in proportion to how much cheap reading and typing it moves off the frontier model, and orchestration run for its own sake costs more than it saves.
+- **Stretch your Fable quota.** On coverage-heavy work — audits, migrations, bulk refactors, scenario testing — 22–42% less frontier output at identical, independently-graded quality. The tokens that move to Sonnet are the reading and typing, never the thinking.
+- **Never at taste's expense.** "Is this taste-critical?" is the *first* routing question: UI, architecture, naming, product feel, and every "what do you suggest?" get the lead's full depth, unabridged, no matter how small. Saving frontier tokens on copying is what pays for spending them freely on designing.
+- **Near-zero overhead when delegation doesn't pay.** "Do it myself" is a first-class routing outcome, so on small or taste-led work the skill stays out of the way — the worst case is roughly vanilla, not a process tax.
+- **A quality mechanism vanilla doesn't have.** Every self-performed audit gets a cheap fresh-eyes backstop sweep; in testing it caught the one bug the lead missed, for cents.
+- **Everything delegated is reviewed.** The lead reads every executor diff before it ships; deviations mean a corrected brief and a fresh executor, never silent drift.
 
-## Features
+## What it does
 
-- **A five-way routing table, applied as a reflex** — taste-critical → lead at full depth, always; tiny → lead (brief would outweigh the diff); verifiable + heavy → cheap executor; big-but-unbriefable and not taste-critical → Opus escape valve; big separable reads → lead-model *scouts* that absorb huge reading in a clean context and return distilled briefs (justified by context economics, not rate). Under uncertainty, route up: misrouted mechanical work bounces back cheaply, misrouted taste work fails silently.
-- **Judgment stays frontier, structurally** — taste never routes down because taste is the first routing criterion, not a guardrail bolted on. The savings exist so the lead can think, design, and delight without rationing.
-- **8-element briefs** — verified facts (anchored `file:line` + quote), the decided mechanism, frozen-file constraints, exact verification commands, the commit message, a structured report contract, and a mandatory escape hatch ("STOP and report rather than improvising"). Typical brief: 200–600 words — compress transcription, never the mechanism or the why.
-- **Blessed artifacts, not retyping** — bulk inventories (site lists, censuses) are written to spec-ready files by whoever found them, verified by the lead, and referenced by path, so transcription never flows through frontier output tokens.
-- **Explicit model binding, no continuations** — every launch names its model (unbound subagents silently inherit the lead's model and bill at frontier rates); corrections relaunch against the corrected brief because messaged agents resume at the lead's model (observed in the field).
-- **Review as the quality floor** — the lead reads every delegated diff (input tokens: the cheap direction); mechanical bulk gets pattern-plus-count verification; empirical checks ("write the failing test first") beat opinion passes at any tier.
-- **Context hygiene** — large reports land as files with ten-line summaries; the resident session stays skinny because everything in it is re-read on every later turn.
-- **Campaign mode, opt-in by judgment** — genuinely large multi-cycle work adds briefs-as-files under `specs/`, a living master doc a fresh lead could resume from, and user checkpoints before behavior ships. It is a paragraph of discipline, not a process.
+Invoked at session start (`/sub-minions`), the skill turns the lead into a router. Every task — or each separable chunk of one — gets one glance and one routing decision:
+
+1. **Taste-critical?** (design, architecture, product feel, writing) → the lead does it itself, at full depth, always.
+2. **Tiny?** (the instructions would be longer than the change) → the lead does it itself.
+3. **Verifiable and heavy?** (checkable by build/tests/grep, and mostly reading many files or typing known edits) → delegated to a cheap executor against a tight 8-element brief: verified facts, the exact mechanism (decided by the lead), constraints, verification commands, a structured report contract, and a mandatory escape hatch — stop and report rather than improvise.
+4. **Big but impossible to brief tightly, and not taste-critical?** → an Opus-tier escape valve, used rarely and stated explicitly.
+5. **A huge separable read?** → a scout in a clean context that returns a distilled brief — but only when it *replaces* reading the lead would otherwise do.
+
+Under uncertainty the router routes **up**, toward the lead: misrouted mechanical work bounces back cheaply off verification, misrouted taste work fails silently. Genuinely large multi-cycle work can opt into campaign mode — briefs as files, a living master doc a fresh session could resume from, and user checkpoints before behavior ships.
+
+## Under the hood
+
+- **Explicit model binding, no continuations** — every subagent launch names its model (an unbound launch silently inherits the lead's model and bills at frontier rates), and corrections always relaunch against a corrected brief rather than messaging a running agent (continuations resume at the lead's model).
+- **Blessed artifacts, not retyping** — bulk inventories (site lists, censuses, scenario matrices) are written to spec-ready files by whoever found them, verified by the lead, and referenced by path, so transcription never flows through frontier output tokens.
+- **Context hygiene** — large reports land as files with ten-line summaries, independent launches go out in single batches, and read-only helpers run in parallel with the lead's own work, because every extra turn re-reads the whole session at frontier cache rates.
+- **Concurrency conventions** — any number of read-only agents in parallel, one writer per repository, one driver per stateful resource, frozen files named in every brief.
 
 The skill is a directory: `SKILL.md` is the doctrine; `references/` holds the brief template and the report contracts.
 
@@ -33,15 +45,19 @@ Two data points shaped this design, one from Anthropic and one from our own head
 
 **At scale, delegation economics are real.** Anthropic measured a Fable 5 orchestrator with Sonnet 5 workers at **96% of solo Fable 5 performance for 46% of the price** on BrowseComp ([@ClaudeDevs](https://x.com/claudedevs/status/2074606063509528855)), and their [plan-big-execute-small cookbook](https://github.com/anthropics/claude-cookbooks/blob/main/managed_agents/CMA_plan_big_execute_small.ipynb) measured a coverage-research workload at **2.5× cheaper and 3× faster**, with 84% of input tokens billed at the cheap-worker rate. The win comes from fanning out ~900k tokens of *reading* at worker rates.
 
-**Our own head-to-head measurements.** We ran this skill against vanilla solo Fable on identical sealed fixtures with independent grading (seeded-bug answer keys, adversarial probes of delivered modules, verification run by the grader rather than self-reported):
+**Head-to-head measurements.** The skill was benchmarked against vanilla solo Fable on identical sealed fixtures with independent grading (seeded-bug answer keys, adversarial probes of delivered modules, verification run by the grader rather than self-reported):
 
 | Workload | Quality (skill vs. solo) | Frontier output | Total cost |
 |---|---|---|---|
 | Small audit (375 lines, 10 seeded bugs) | 10/10 vs. 10/10 | **−13%** | +5–12% (within noise) |
-| Large audit + 49-site migration (2k lines, 13 bugs) | 13/13 vs. 13/13 | **−22% to −42%** | −13% at best config |
-| Taste-led feature build (production Next.js app, scoring engine + API + UI) | parity (38 vs. 37.5 on a sealed 40-pt rubric) | **+24%** | +45% |
+| Large audit + 49-site migration (2k lines, 13 bugs) | 13/13 vs. 13/13 | **−22% to −42%** | −13% |
+| Taste-led feature build (production Next.js app: scoring engine + API + UI) | parity (38 vs. 37.5 on a sealed 40-pt rubric) | +24%* | +45%* |
 
-Three lessons are encoded in the doctrine. Routing beats standing orchestration: an always-on pipeline (mappers, skeptics, executor fan-out) over the small fixture cost 2.6× solo at identical quality. Delegation pays exactly where cheap reading/typing *substitutes* for frontier work — the large-audit rows. And on taste-led work the correct answer is near-zero delegation: scouts that precede rather than replace the lead's own reading are pure overhead (the +24% row — its causes, orientation scouts and extra delegation rounds, are now gated in the doctrine). A cheap fresh-eyes backstop closed the one recall gap ever observed (12/13 → 13/13) for cents.
+<sub>*The taste-led overhead came from two behaviors the doctrine now explicitly forbids (orientation scouts that precede rather than replace the lead's own reading, and thin serial delegation rounds); with those gated, the expected result on taste-led work is ≈ vanilla — expected, not yet re-measured.</sub>
+
+The doctrine follows the measurements. Delegation pays exactly where cheap reading and typing *substitute* for frontier work — the large-audit row. On taste-led work the router's correct move is to delegate almost nothing (the lead must read the territory to design against it), so the skill's job there is to stay out of the way and cost nothing. And the fresh-eyes backstop closed the only recall gap observed in any run (12/13 → 13/13) for cents.
+
+Be honest with yourself about fit: **if your sessions are mostly small tasks and taste-led feature work, vanilla Fable needs no help** — this skill earns its keep on coverage-heavy work (big audits, migrations, bulk refactors, long test-driven sessions) and on quota-constrained days when Fable headroom is worth more than dollars.
 
 No formal license; shared publicly as-is.
 
