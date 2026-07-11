@@ -68,7 +68,8 @@ Brevity: the 8 elements are required, elaboration is not — typical brief 200�
 
 - `review=lead` (default): read every delegated diff before it ships. Risk-proportional: state-machine and lifecycle changes get scenario-by-scenario re-walks; mechanical bulk gets pattern-plus-count verification (confirm a sample, then grep for count and stragglers).
 - A diff that deviates from its brief is automatically suspect: executor improvised → discard, relaunch; your brief was wrong → fix the brief, relaunch, note it.
-- Prefer empirical verification you can delegate: "write a failing test that proves the bug, then fix it" beats an opinion pass at any tier.
+- Prefer empirical verification you can delegate: "write a failing test that proves the bug, then fix it" beats an opinion pass at any tier. After your own fixes, regression-test typing is verifiable and heavy: decide per fix what each test must prove, then delegate the typing.
+- **Audit backstop:** when the engagement is an audit and you did the auditing yourself, buy one cheap insurance pass before reporting: a single `exec`-model fresh-eyes sweep instructed to list candidate contract violations (`file:line` + quote; uncertain candidates welcome). You adjudicate every candidate by reading the cited code. One extra launch costs cents; a missed finding costs the engagement.
 - Scenario testing delegates well (`exec` model): numbered scenarios, expected outcomes, per-scenario PASS/FAIL/BLOCKED per `references/report-contract.md`. BLOCKED means the environment cannot exercise it — route to a needs-human list, retry at most once and only if something changed.
 - Your own findings do not need cheap-model validation — a lower tier cannot meaningfully check you. Verify your claims by reading the cited code and by tests, not by committee.
 
