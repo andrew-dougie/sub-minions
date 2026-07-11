@@ -12,7 +12,7 @@
 
 An agent skill that codifies one discipline: **route every task by taste, verifiability, and reading mass — then protect the routing with review.** The frontier lead (Fable) keeps everything where quality depends on judgment no mechanical check can score: UI and UX, architecture, API shape, naming, product feel, "what should we build?" Work that is mechanically verifiable and heavy in reading or typing — bulk edits, spec'd fixes, migrations, scenario testing, coverage reading — is delegated to cheap executor subagents against tight briefs. Tiny tasks the lead just does: below the delegation floor, a brief costs more than the diff.
 
-This is the second design of this skill, and it was rebuilt from measurement rather than theory. The first design was a full orchestration mode (ladder of phases, mapper/auditor/skeptic castes, standing machinery). It worked at scale and lost badly below it — see the evidence section. The routing design keeps what measurement validated and deletes the bureaucracy.
+There is deliberately no standing machinery — no phase ladder, no always-on orchestration mode. Routing is a per-task reflex, and "the lead does it itself" is a first-class outcome. The design is grounded in measurement (see the evidence section): delegation pays off in proportion to how much cheap reading and typing it moves off the frontier model, and orchestration run for its own sake costs more than it saves.
 
 ## Features
 
@@ -23,7 +23,7 @@ This is the second design of this skill, and it was rebuilt from measurement rat
 - **Explicit model binding, no continuations** — every launch names its model (unbound subagents silently inherit the lead's model and bill at frontier rates); corrections relaunch against the corrected brief because messaged agents resume at the lead's model (observed in the field).
 - **Review as the quality floor** — the lead reads every delegated diff (input tokens: the cheap direction); mechanical bulk gets pattern-plus-count verification; empirical checks ("write the failing test first") beat opinion passes at any tier.
 - **Context hygiene** — large reports land as files with ten-line summaries; the resident session stays skinny because everything in it is re-read on every later turn.
-- **Campaign mode, opt-in by judgment** — genuinely large multi-cycle work adds briefs-as-files under `specs/`, a living master doc a fresh lead could resume from, and user checkpoints before behavior ships. It is a paragraph, not a ladder.
+- **Campaign mode, opt-in by judgment** — genuinely large multi-cycle work adds briefs-as-files under `specs/`, a living master doc a fresh lead could resume from, and user checkpoints before behavior ships. It is a paragraph of discipline, not a process.
 
 The skill is a directory: `SKILL.md` is the doctrine; `references/` holds the brief template and the report contracts.
 
@@ -33,7 +33,7 @@ Two data points shaped this design, one from Anthropic and one from our own head
 
 **At scale, delegation economics are real.** Anthropic measured a Fable 5 orchestrator with Sonnet 5 workers at **96% of solo Fable 5 performance for 46% of the price** on BrowseComp ([@ClaudeDevs](https://x.com/claudedevs/status/2074606063509528855)), and their [plan-big-execute-small cookbook](https://github.com/anthropics/claude-cookbooks/blob/main/managed_agents/CMA_plan_big_execute_small.ipynb) measured a coverage-research workload at **2.5× cheaper and 3× faster**, with 84% of input tokens billed at the cheap-worker rate. The win comes from fanning out ~900k tokens of *reading* at worker rates.
 
-**Below the floor, orchestration loses — badly.** We ran a controlled head-to-head on a 375-line seeded-bug fixture (10 planted contract violations, sealed answer key): vanilla Fable solo scored a perfect 10/10 with zero false positives for **$3.01 in 5.7 minutes**; the v1 orchestration mode scored the same perfect 10/10 for **$7.88 in 12.9 minutes**, spending 45% *more* frontier output than solo — pure coordination overhead with nothing to amortize against. Same quality, 2.6× the price. That result is why this skill routes per task and treats "do it myself" as a first-class outcome instead of running standing machinery.
+**Below the floor, orchestration loses — badly.** In a controlled head-to-head on a 375-line seeded-bug fixture (10 planted contract violations, sealed answer key), vanilla Fable solo scored a perfect 10/10 with zero false positives for **$3.01 in 5.7 minutes**, while a full orchestration pipeline over the same fixture — mappers, adversarial skeptics, executor fan-out — scored the same perfect 10/10 for **$7.88 in 12.9 minutes**, spending 45% *more* frontier output than solo: pure coordination overhead with nothing to amortize against. Same quality, 2.6× the price. That result is why this skill routes per task instead of orchestrating by default.
 
 No formal license; shared publicly as-is.
 
