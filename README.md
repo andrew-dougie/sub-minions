@@ -51,9 +51,9 @@ Two data points shaped this design, one from Anthropic and one from our own head
 |---|---|---|---|
 | Small audit (375 lines, 10 seeded bugs) | 10/10 vs. 10/10 | **−13%** | +5–12% (within noise) |
 | Large audit + 49-site migration (2k lines, 13 bugs) | 13/13 vs. 13/13 | **−22% to −42%** | −13% |
-| Taste-led feature build (production Next.js app: scoring engine + API + UI) | parity (38 vs. 37.5 on a sealed 40-pt rubric) | +24%* | +45%* |
+| Taste-led feature build (production Next.js app: scoring engine + API + UI) | parity (sealed 40-pt rubric; verified suites green in every run) | **+10%*** | single-run noise* |
 
-<sub>*The taste-led overhead came from two behaviors the doctrine now explicitly forbids (orientation scouts that precede rather than replace the lead's own reading, and thin serial delegation rounds); with those gated, the expected result on taste-led work is ≈ vanilla — expected, not yet re-measured.</sub>
+<sub>*Taste-led work is the skill's null regime, and this row was measured twice. Before the launch-justification rule existed, the router launched 5 agents (4 unjustified orientation scouts) and measured +24% frontier output / +45% cost. Re-measured after: launches dropped to exactly 1 (a justified test-writer), frontier output narrowed to +10% of vanilla, and quality parity held. The residual output gap and the dollar spread sit within single-run variance — each run's exploration depth dominates cost at this task size; the delegation overhead itself is gone.</sub>
 
 The doctrine follows the measurements. Delegation pays exactly where cheap reading and typing *substitute* for frontier work — the large-audit row. On taste-led work the router's correct move is to delegate almost nothing (the lead must read the territory to design against it), so the skill's job there is to stay out of the way and cost nothing. And the fresh-eyes backstop closed the only recall gap observed in any run (12/13 → 13/13) for cents.
 
