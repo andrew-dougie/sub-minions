@@ -85,6 +85,7 @@ Copy-paste skeleton with inline guidance: [references/spec-template.md](referenc
 ## Limitations
 
 - **Claude Code only.** The pattern depends on in-session subagents with per-agent model choice and background execution; no other agent platform currently provides them, so this skill does not target other platforms.
+- **Agent continuations inherit the lead's model.** In Claude Code, messaging a subagent (SendMessage) can resume it at the session model rather than its launched model — observed in practice silently turning Sonnet executors into frontier-priced ones mid-run. The skill therefore corrects executors by relaunching against the spec file, never by continuation.
 - **Concurrency rules are convention, not enforcement.** One-writer-per-repo, one-driver-per-stateful-resource, and file freezes are honored because specs state them and the lead checks them at launch time. Nothing at the platform level prevents two agents from colliding if the lead schedules carelessly.
 - **Verification depth costs real tokens.** Adversarial passes and independent reviews are extra agent runs. The defaults assume multi-cycle work where a false P1 is more expensive than a skeptic pass; for small tasks, collapse the ladder (the skill tells the lead how).
 - **The lead is a single point of failure.** If the lead session dies, recovery depends entirely on master-doc discipline. That is why `master-doc=auto` is the default for multi-cycle work.

@@ -40,7 +40,7 @@ On invocation, ECHO the resolved configuration as a short table (arg, value, sou
 
 **Model binding:** every subagent you launch runs at the `exec` model (test agents at `test`) unless you deliberately escalate a specific launch to a stronger model and say so. Never let a launch silently inherit your own model — an Agent call with no `model` inherits yours, and an unbound mapper burns lead-tier tokens on exactly the work this skill exists to delegate.
 
-An executor that improvises is disposable: kill it, fix the spec, launch a fresh one. Never negotiate with a confused executor; the spec was the problem. But an executor that fires the escape hatch is not confused — it stopped cleanly, did nothing after the mismatch, and still holds all its context. Send it the one-line spec correction via SendMessage instead of relaunching: one delta round, then kill and relaunch if it is still stuck.
+Every executor is disposable, and every correction goes through relaunch: fix the spec file, then launch a fresh executor pointed at the corrected spec plus a one-line delta. This applies uniformly — improvisation, lead-review findings, test failures, and clean escape-hatch stops alike. Because specs are files, a relaunch costs one line of lead output; never negotiate with a confused executor, the spec was the problem. Do NOT direct further work through SendMessage continuations: a continued agent resumes at the LEAD's model, not its launched model, so a "cheap delta" silently becomes frontier-priced execution. SendMessage is for pulling a short status answer at most.
 
 ## 3. Phase ladder
 
